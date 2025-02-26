@@ -2,22 +2,23 @@
 FROM python:3.10
 
 # Устанавливаем переменные окружения
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
-ENV DJANGO_SETTINGS_MODULE=FILTER.settings
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    DJANGO_SETTINGS_MODULE=FILTER.settings \
+    LANG=ru_RU.UTF-8 \
+    LANGUAGE=ru_RU:ru \
+    LC_ALL=ru_RU.UTF-8
 
-# Установка локали
+# Установка локали и часового пояса
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gettext \
     locales \
     && rm -rf /var/lib/apt/lists/* \
     && sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen \
-    && locale-gen
-
-ENV LANG ru_RU.UTF-8
-ENV LANGUAGE ru_RU:ru
-ENV LC_ALL ru_RU.UTF-8
+    && locale-gen \
+    && ln -sf /usr/share/zoneinfo/Asia/Bishkek /etc/localtime \
+    && echo "Asia/Bishkek" > /etc/timezone
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -29,10 +30,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем весь проект
 COPY . .
 
-# Создаём и компилируем файлы локализации для русского языка (если их нет)
-RUN mkdir -p locale/ru/LC_MESSAGES
-RUN django-admin compilemessages -l ru || echo "No message files found, skipping compilemessages"
+# Создаём и компилируем файлы локализации для русского языка
+RUN mkdir -p locale/ru/LC_MESSAGES \
+    && python manage.py makemessages -l ru \
+    && python manage.py compilemessages -l ru
 
 # Команда по умолчанию (для Django)
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "FILTER.wsgi:application"]
-

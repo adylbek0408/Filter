@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.utils.translation import gettext_lazy as _
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,6 +15,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -39,6 +43,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'FILTER.urls'
 
@@ -99,11 +104,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'ru'
-
 TIME_ZONE = 'Asia/Bishkek'
 USE_TZ = True
 USE_I18N = True
 USE_L10N = True
+
+LANGUAGES = [
+    ('ru', 'Russian'),
+]
+
 
 STATIC_ROOT = '/app/static'
 STATIC_URL = '/static/'
