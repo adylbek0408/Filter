@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Order(models.Model):
@@ -14,6 +15,11 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Заказ #{self.id} - {self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_at = timezone.now()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Заказ'
@@ -35,3 +41,8 @@ class Moderator(models.Model):
         verbose_name='Telegram Chat ID',
         help_text='Это поле заполнится автоматически после старта бота'
     )
+
+    class Meta:
+        verbose_name = 'Модератор'
+        verbose_name_plural = 'Модераторы'
+

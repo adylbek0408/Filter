@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -97,16 +98,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
+TIME_ZONE = 'Asia/Bishkek'
 USE_TZ = True
-
-
-
+USE_I18N = True
+USE_L10N = True
 
 STATIC_ROOT = '/app/static'
 STATIC_URL = '/static/'
@@ -146,7 +143,30 @@ JAZZMIN_SETTINGS = {
     "icons": {
         "auth.Group": "fas fa-users",
         "auth.User": "fas fa-user",
-    }
+        "application.Order": "fas fa-shopping-cart",  # Иконка для заказов
+        "application.Moderator": "fas fa-user-shield",  # Иконка для модераторов
+    },
+    # Русские названия для стандартных моделей и приложений
+    "custom_links": {
+        "application": [{
+            "name": "Заказы",
+            "url": "admin:application_order_changelist",
+            "icon": "fas fa-shopping-cart",
+        }],
+    },
+    # Перевод названий разделов
+    "order_with_respect_to": ["application", "auth"],
+    # Добавьте эти параметры для переименования блоков
+    "verbose_name": {
+        "auth.user": "Пользователи",
+        "auth.group": "Группы",
+        "application.order": "Заказы",
+        "application.moderator": "Модераторы",
+    },
+    "verbose_app_name": {
+        "auth": "Аутентификация и Авторизация",
+        "application": "Приложение",
+    },
 }
 
 JAZZMIN_UI_TWEAKS = {
