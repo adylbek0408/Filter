@@ -19,16 +19,18 @@ services:
       - static_volume:/app/static
       - media_volume:/app/media
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "sleep 10 &&
+             python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              gunicorn --bind 0.0.0.0:8000 FILTER.wsgi:application"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   bot:
     build: .
     env_file: .env
-    command: python bot.py
+    command: python /app/bot.py  # Убедитесь, что путь правильный
     depends_on:
       - postgres
 
@@ -37,8 +39,14 @@ services:
     env_file: .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+
