@@ -1,5 +1,5 @@
 # Базовый образ
-FROM python:3.11-slim
+FROM python:3.11-bullseye
 
 # Установка рабочей директории
 WORKDIR /app
@@ -9,14 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     TZ=UTC
 
-# Установка зависимостей системы
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    postgresql-client \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-
-# Установка зависимостей Python
+# Копирование зависимостей Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -32,5 +25,4 @@ EXPOSE 8000
 # Скрипт запуска
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
 ENTRYPOINT ["/entrypoint.sh"]

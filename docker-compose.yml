@@ -54,6 +54,9 @@ services:
   bot:
     build: .
     restart: always
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     depends_on:
       - web
     env_file:
@@ -64,3 +67,4 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
+

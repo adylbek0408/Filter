@@ -1,21 +1,17 @@
 #!/bin/bash
-
 set -e
 
-# Ожидание доступности базы данных
-echo "Waiting for PostgreSQL..."
-until PGPASSWORD=$POSTGRES_PASSWORD psql -h $DB_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c '\q'; do
-  echo "PostgreSQL is unavailable - sleeping"
-  sleep 1
-done
+# Подождать, пока база данных будет готова
+echo "Waiting for database..."
+sleep 5
 
-echo "PostgreSQL is up - executing command"
-
-# Применение миграций
+# Применить миграции
+echo "Applying migrations..."
 python manage.py migrate
 
-# Сбор статических файлов
+# Собрать статические файлы
+echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-# Запуск команды из docker-compose
+# Запустить команду из docker-compose
 exec "$@"
