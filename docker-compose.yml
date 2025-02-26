@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   nginx:
     image: nginx:alpine
@@ -19,9 +18,10 @@ services:
       - static_volume:/app/static
       - media_volume:/app/media
     command: >
-      sh -c "sleep 10 &&
-             python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
+      sh -c "sleep 10 && 
+             python manage.py migrate && 
+             python manage.py compilemessages -l ru || echo 'Skipping compilemessages' && 
+             python manage.py collectstatic --noinput && 
              gunicorn --bind 0.0.0.0:8000 FILTER.wsgi:application"
     depends_on:
       postgres:
@@ -30,7 +30,7 @@ services:
   bot:
     build: .
     env_file: .env
-    command: python /app/bot.py  # Убедитесь, что путь правильный
+    command: python /app/bot.py
     depends_on:
       - postgres
 
