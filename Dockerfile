@@ -1,38 +1,25 @@
-# Базовый образ
-FROM python:3.11
+# Используем официальный образ Python
+FROM python:3.10-slim
 
-# Установка рабочей директории
+# Устанавливаем переменные окружения
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
+
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Установка переменных окружения
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    TZ=UTC
+# Устанавливаем системные зависимости
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Копирование зависимостей Python
+# Копируем и устанавливаем Python-зависимости
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# PostgreSQL уже доступен в этом образе
-# Копирование исходного кода проекта
+# Копируем весь проект
 COPY . .
 
-# Создание директории для статических файлов
-RUN mkdir -p /app/static
-
-# Открытие порта для Django
-EXPOSE 8000
-
-# Создание и настройка entrypoint
-RUN echo '#!/bin/bash' > /entrypoint.sh && \
-    echo 'set -e' >> /entrypoint.sh && \
-    echo 'echo "Waiting for database..."' >> /entrypoint.sh && \
-    echo 'sleep 5' >> /entrypoint.sh && \
-    echo 'echo "Applying migrations..."' >> /entrypoint.sh && \
-    echo 'python manage.py migrate' >> /entrypoint.sh && \
-    echo 'echo "Collecting static files..."' >> /entrypoint.sh && \
-    echo 'python manage.py collectstatic --noinput' >> /entrypoint.sh && \
-    echo 'exec "$@"' >> /entrypoint.sh && \
-    chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+# Команда по умолчанию (для Django)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "FILTER.wsgi:application"]
