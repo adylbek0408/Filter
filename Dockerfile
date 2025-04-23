@@ -8,20 +8,22 @@ ENV PYTHONUNBUFFERED=1 \
     LANGUAGE=ru_RU:ru \
     LC_ALL=ru_RU.UTF-8
 
-# Установка локали и часового пояса
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
+# Установка необходимых пакетов и настройка локали в Alpine
+RUN apk add --no-cache \
+    postgresql-dev \
+    gcc \
+    musl-dev \
     gettext \
-    locales \
-    && rm -rf /var/lib/apt/lists/* \
-    && sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen \
-    && locale-gen \
-    && ln -sf /usr/share/zoneinfo/Asia/Bishkek /etc/localtime \
+    tzdata \
+    && cp /usr/share/zoneinfo/Asia/Bishkek /etc/localtime \
     && echo "Asia/Bishkek" > /etc/timezone
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
+
+# Создаем директории для статики и медиа
 RUN mkdir -p /app/static /app/media && chmod -R 755 /app/static /app/media
+
 # Копируем и устанавливаем Python-зависимости
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
