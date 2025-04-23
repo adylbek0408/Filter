@@ -1,5 +1,4 @@
-# Используем официальный образ Python (не slim)
-FROM python:3.10
+FROM python:3.10-alpine
 
 # Устанавливаем переменные окружения
 ENV PYTHONUNBUFFERED=1 \
@@ -22,7 +21,7 @@ RUN apt-get update && apt-get install -y \
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
-
+RUN mkdir -p /app/static /app/media && chmod -R 755 /app/static /app/media
 # Копируем и устанавливаем Python-зависимости
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
