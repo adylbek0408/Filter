@@ -117,6 +117,10 @@ LANGUAGES = [
 STATIC_ROOT = '/app/static'
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = '/app/media'
+MEDIA_URL = '/media/'
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -155,14 +159,8 @@ JAZZMIN_SETTINGS = {
         "application.Order": "fas fa-shopping-cart",  # Иконка для заказов
         "application.Moderator": "fas fa-user-shield",  # Иконка для модераторов
     },
-    # Русские названия для стандартных моделей и приложений
-    "custom_links": {
-        "application": [{
-            "name": "Заказы",
-            "url": "admin:application_order_changelist",
-            "icon": "fas fa-shopping-cart",
-        }],
-    },
+    # Удалил дублирующийся блок custom_links для Заказов
+
     # Перевод названий разделов
     "order_with_respect_to": ["application", "auth"],
     # Добавьте эти параметры для переименования блоков
@@ -210,7 +208,6 @@ JAZZMIN_UI_TWEAKS = {
     },
     "actions_sticky_top": True,
 }
-
 
 CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указанных ниже
 CORS_ALLOWED_ORIGINS = [

@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Создаем директории для статики и медиа, если они не существуют
+mkdir -p /app/static /app/media
+
+# Устанавливаем правильные права доступа
+chmod -R 755 /app/static /app/media
+
 # Подождать, пока база данных будет готова
 echo "Waiting for database..."
 sleep 5
