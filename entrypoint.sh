@@ -1,23 +1,18 @@
-#!/bin/bash
-set -e
+#!/bin/sh
 
-# Создаем директории для статики и медиа, если они не существуют
-mkdir -p /app/static /app/media
+# Ждем, пока Postgres станет доступен
+echo "Waiting for PostgreSQL..."
+while ! nc -z postgres 5432; do
+  sleep 0.5
+done
+echo "PostgreSQL started"
 
-# Устанавливаем правильные права доступа
-chmod -R 755 /app/static /app/media
-
-# Подождать, пока база данных будет готова
-echo "Waiting for database..."
-sleep 5
-
-# Применить миграции
-echo "Applying migrations..."
+# Применяем миграции
 python manage.py migrate
 
-# Собрать статические файлы
-echo "Collecting static files..."
+# Собираем статические файлы
 python manage.py collectstatic --noinput
 
-# Запустить команду из docker-compose
+# Выполняем команду, переданную в docker-compose
 exec "$@"
+
