@@ -213,6 +213,7 @@ CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указ
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://83.147.245.72",
     "https://your-frontend-domain.com",  # Продакшен-фронт
 ]
 
